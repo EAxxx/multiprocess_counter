@@ -14,8 +14,8 @@
 int checarSePrimo(int numero)
 {
 
-  // Caso base
-  if (numero == 1)
+  // Casos base
+  if ( (numero == 1) || (numero == 0) )
   {
     return -1;
   }
@@ -47,17 +47,14 @@ int separarEmNumeros(int **numeros)
 
   fgets(entrada, sizeof(entrada), stdin); // Recebemos a string de entrada
 
-  // Extraímos os números da string
-  p = strtok(entrada, " \n");
-  for (tam = 0; p != NULL; tam++)
+  p = strtok(entrada, " \n"); // Selecionamos o primeiro número da entrada
+  for (tam = 0; p != NULL; tam++) // Extraímos os números da string
   {
-    printf ("\n%s\n",p);
-
     *numeros = (int *) realloc(*numeros, (sizeof(int) * (tam + 1) ) ); // Alocamos mais espaço para o vetor
 
     (*numeros)[tam] = atoi(p); // Salvamos no vetor o número convertido para int
 
-    p = strtok (NULL, " \n");
+    p = strtok (NULL, " \n"); // Selecionamos o próximo número
 
   }
   
@@ -69,7 +66,19 @@ int main()
 {
   int *numeros = NULL; // Vetor que armazena os números a serem avaliados
   int totNums = 0; // Total de números a serem avaliados
+  int numAval = 0; // Número que estamos avaliando se é primo ou não
 
   totNums = separarEmNumeros(&numeros);
+
+  for (int i = 0; i < totNums; i++)
+  {
+    numAval = checarSePrimo(numeros[i]);
+    if (numAval != -1)
+    {
+      printf("\n%d\n", numAval);
+    }
+    
+  }
+  
   return 0;
 }
