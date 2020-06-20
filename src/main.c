@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define maxprocess 4 // Definimos o número máximo de processos simultâneos
+#define maxprocess 4       // Definimos o número máximo de processos simultâneos
 #define MAP_ANONYMOUS 0x20 // Define usado para contornar o fato do compilador do meu IDE não identificar esse define nativamente
 
 /* Função que identifica se o número é primo, retornando o número se ele for 
@@ -41,7 +41,7 @@ int checarSePrimo(int numero)
 
 /* Função que recebe a string de entrada com os números a serem análisados e extrai desta 
    cada número e os salva em um vetor */
-int separarEmNumeros(int **numeros)
+int receberEntrada(int **numeros)
 {
 
   char entrada[300]; // Armazena a entrada do programa como uma string
@@ -67,20 +67,20 @@ int main(int argc, char *argv[])
 {
   int *numeros = NULL; // Vetor que armazena os números a serem avaliados
   int totNums = 0;     // Total de números a serem avaliados
-  int numAval = 0;   // Número para testar se é primo
-  int *totPrimos; // Indica o total de números primos identificados
+  int numAval = 0;     // Número para testar se é primo
+  int *totPrimos;      // Indica o total de números primos identificados
 
   pid_t pidFilho;     // PID do processo filho
   int totProcess = 0; // Total de processos executando no momento
-  int status; // Usado na função wait, indica o status atual do processo
+  int status;         // Usado na função wait, indica o status atual do processo
 
   // Definimos as flags de proteção e visibilidade da memória
-  int protecao = PROT_READ | PROT_WRITE; // A memória pode ser lida e escrita
+  int protecao = PROT_READ | PROT_WRITE;         // A memória pode ser lida e escrita
   int visibilidade = MAP_SHARED | MAP_ANONYMOUS; // A memória é compartilhada e privada
 
-  totPrimos = (int*) mmap(NULL, sizeof(int), protecao, visibilidade, 0, 0); // Alocamos o espaço necessários na memória compartilhada
-  (*totPrimos) = 0; // Incializamos a variável
-  totNums = separarEmNumeros(&numeros); // Recebemos as entradas do programa
+  totPrimos = (int *)mmap(NULL, sizeof(int), protecao, visibilidade, 0, 0); // Alocamos o espaço necessários na memória compartilhada
+  (*totPrimos) = 0;                                                         // Incializamos a variável
+  totNums = receberEntrada(&numeros);                                       // Recebemos as entradas do programa
 
   for (int i = 0; i < totNums; i++)
   {
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  while( (wait(&status) > 0) ); // Esperamos o encerramento qualquer processo filho que ainda esteja em execução
+  while ((wait(&status) > 0)); // Esperamos o encerramento qualquer processo filho que ainda esteja em execução
 
   printf("%d\n", *totPrimos); // Printamos o total de números primos encontrados
 
