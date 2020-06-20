@@ -8,6 +8,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+
+#include <unistd.h>
+
 
 /* Função que identifica se o número é primo, retornando o número se ele for 
    primo e -1 se ele não for primo*/
@@ -62,21 +67,45 @@ int separarEmNumeros(int **numeros)
 
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   int *numeros = NULL; // Vetor que armazena os números a serem avaliados
   int totNums = 0; // Total de números a serem avaliados
   int numAval = 0; // Número que estamos avaliando se é primo ou não
 
-  totNums = separarEmNumeros(&numeros);
+  pid_t pidFilho; // PID do processo filho
+  int totProcess = 0; // Total de processos executando no momento
+
+  totNums = separarEmNumeros(&numeros); // Recebemos as entradas do programa
 
   for (int i = 0; i < totNums; i++)
   {
-    numAval = checarSePrimo(numeros[i]);
-    if (numAval != -1)
+    totProcess++; // Incrementamos o contador de processos
+
+    while (totProcess >= 4) // Se estamos no número máximo de processos simultâneos (4)
     {
-      printf("\n%d\n", numAval);
+      int status; // Indica se um dos processos filho está executando ou não
+
+      // Se um dos filhos foi encerrado, decrementamos o contador de processos
+      if (wait(&status) == 0) totProcess--;
+
     }
+    
+    pidFilho = fork(); // Criamos um novo processo
+
+
+    if (pidFilho == 0) // Se estamos no processo filho
+    {
+      numAval = checarSePrimo(numeros[i]); // Determinamos se o número é primo
+
+      if (numAval != -1) // Se o número for primo
+      {
+        printf("\n%d\n", numAval);
+      }
+
+      exit(0); // Encerramos o processo
+    }
+    
     
   }
   
