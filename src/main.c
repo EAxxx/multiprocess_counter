@@ -86,8 +86,12 @@ int main(int argc, char *argv[])
     {
       int status; // Indica se um dos processos filho está executando ou não
 
+      waitpid(-1, &status, WNOHANG); // Esperamos um dos processos terminar
       // Se um dos filhos foi encerrado, decrementamos o contador de processos
-      if (wait(&status) == 0) totProcess--;
+      if (WIFEXITED(status))
+      {
+        totProcess--;
+      }
 
     }
     
